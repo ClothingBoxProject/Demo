@@ -1,0 +1,76 @@
+/* 공통 스타일 */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+  color: #333;
+}
+
+/* 콘텐츠 스타일 */
+.content {
+  padding-top: 100px;
+  max-width: 1200px;
+  margin: auto;
+  padding: 1em 1em;
+  text-align: center;
+}
+
+.content h1 {
+  font-size: 2.5em;
+  color: rgba(46, 139, 87, 0.8);
+  margin-top: 2em;
+}
+
+.content p {
+  font-size: 1.2em;
+  color: #555;
+  line-height: 0.5;
+  max-width: 800px;
+  margin: 1em auto;
+}
+
+.suggestion {
+  margin-top: 1.5em;
+  font-size: 1.1em;
+  color: #777;
+  text-decoration: underline;
+  cursor: pointer;
+  text-align: center;
+}
+
+/* 이미지 스타일 */
+.banner-image {
+  width: 300px;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 1.5em;
+}
+
+/* 섹션 스타일 */
+.cloth-section {
+  background-color: #fff;
+  padding: 2em;
+  margin: 1em auto;
+  max-width: 800px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.cloth-section h2 {
+  font-size: 1.8em;
+  color: #2e8b57;
+  margin-bottom: 0.5em;
+}
+
+.cloth-section ul {
+  padding-left: 20px;
+}
+
+.cloth-section ul li {
+  margin: 0.5em 0;
+  line-height: 1.5;
+  font-size: 1em;
+}
+

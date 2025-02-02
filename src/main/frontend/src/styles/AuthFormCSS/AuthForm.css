@@ -1,0 +1,137 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+  color: #333;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  justify-content: space-between;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+/* 로그인 & 회원가입 폼 */
+.form-container {
+  background: #fff;
+  padding: 2em;
+  width: 90%;
+  max-width: 400px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+.form-container .form-top-text {
+  font-size: 1.5em;
+  color: #2e8b57;
+  font-weight: bold;
+  white-space: nowrap;
+}
+.form-container input {
+  width: 90%;
+  padding: 0.75em;
+  margin: 0.7em 0;
+  border: none;
+  border-radius: 8px;
+  font-size: 1em;
+  background-color: #f9f9f9;
+}
+
+.form-container button {
+  width: 100%;
+  padding: 0.75em;
+  border: none;
+  border-radius: 8px;
+  background-color: #2e8b57;
+  color: #fff;
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.form-container button:hover {
+  background-color: #267a4e;
+}
+
+/* 회원가입/로그인 토글 버튼 */
+.toggle {
+  width: 100%;
+  margin-top: 1em;
+  font-size: 0.9em;
+  color: #888;
+  display: flex;
+  justify-content: space-between;
+  align-items : center;
+}
+.toggle a {
+  color: #888;
+}
+.toggle a:hover {
+  color: #2e8b57;
+}
+
+/* 오류 메시지 */
+.error {
+  color: red;
+  font-size: 0.9em;
+  margin-bottom: 1em;
+}
+
+
+.alternate-link span {
+ color: #888;
+}
+
+.alternate-link a {
+  color: #2e8b57;
+  text-decoration: none;
+}
+
+.alternate-link a:hover {
+  color: #267a4e;
+}
+
+.id-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.id-text {
+  background-color: #eee;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+/* 아이디 찾기 버튼 */
+.button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #2e8b57;
+  color: white;
+  text-align: center;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #267a4e;
+}

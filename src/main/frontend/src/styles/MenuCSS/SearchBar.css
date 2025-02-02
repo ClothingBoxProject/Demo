@@ -1,0 +1,38 @@
+.search-container {
+  width: 100%;
+  max-width: 600px; /* 검색창과 버튼을 포함하는 영역의 최대 너비 설정 */
+  margin: 0 auto 2em;
+  display: flex;
+  justify-content: center;
+}
+
+.search-container form {
+  width: 100%;
+  display: flex;
+  align-items: center; /* 수직 중앙 정렬 */
+  gap: 5px; /* 입력창과 버튼 사이의 간격 */
+}
+
+.search-input {
+  flex-grow: 1; /* 입력창이 가변적으로 너비를 차지하도록 설정 */
+  padding: 0.8em;
+  border-radius: 30px;
+  border: 2px solid #ccc;
+  font-size: 1em;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.search-btn {
+  padding: 0.6em 1.2em;
+  border: none;
+  background-color: #e0e0e0;
+  color: #333;
+  border-radius: 25px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: auto; /* 버튼 크기가 텍스트 내용에 따라 자동 조정됨 */
+  min-width: 80px; /* 버튼 최소 너비 설정 */
+  text-align: center;
+}
