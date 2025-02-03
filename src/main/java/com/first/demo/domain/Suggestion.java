@@ -31,8 +31,9 @@ public class Suggestion {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false, length = 20)
-    private String status = "PENDING";
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING) // ENUM을 문자열로 저장
+    private SuggestionStatus status = SuggestionStatus.PENDING; // 기본값을 PENDING으로 설정
 
     @Column(columnDefinition = "TEXT")
     private String adminComments;
@@ -40,6 +41,6 @@ public class Suggestion {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
-        this.status = "PENDING"; // 기본 상태 = 보류 중
+        this.status = SuggestionStatus.PENDING; // 기본 상태 = PENDING
     }
 }

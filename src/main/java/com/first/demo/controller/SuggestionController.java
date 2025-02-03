@@ -1,6 +1,7 @@
 package com.first.demo.controller;
 
 import com.first.demo.domain.Suggestion;
+import com.first.demo.domain.SuggestionStatus;
 import com.first.demo.service.SuggestionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,13 +33,13 @@ public class SuggestionController {
         return ResponseEntity.ok(suggestions);
     }
 
-    // 상태 변경 요청 시 상태 검증이 포함됨
     @PutMapping("/{suggestionId}/status")
     public ResponseEntity<?> updateSuggestionStatus(
             @PathVariable Long suggestionId,
-            @RequestParam String status,
+            @RequestParam SuggestionStatus status,  // SuggestionStatus로 받도록 변경
             @RequestParam(required = false) String adminComments) {
         try {
+            // 서비스에서 상태 업데이트
             Suggestion updatedSuggestion = suggestionService.updateSuggestionStatus(suggestionId, status, adminComments);
             return ResponseEntity.ok(updatedSuggestion);
         } catch (IllegalArgumentException e) {
@@ -46,8 +47,9 @@ public class SuggestionController {
         }
     }
 
+    // 상태를 SuggestionStatus ENUM으로 받도록 변경
     @GetMapping("/status/{status}")
-    public ResponseEntity<List<Suggestion>> getSuggestionsByStatus(@PathVariable String status) {
+    public ResponseEntity<List<Suggestion>> getSuggestionsByStatus(@PathVariable SuggestionStatus status) {  // ENUM으로 변경
         List<Suggestion> suggestions = suggestionService.getSuggestionsByStatus(status);
         return ResponseEntity.ok(suggestions);
     }
@@ -58,4 +60,3 @@ public class SuggestionController {
         return ResponseEntity.ok(suggestions);
     }
 }
-

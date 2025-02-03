@@ -6,6 +6,8 @@ import com.first.demo.repository.DonationRepository;
 import com.first.demo.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,5 +37,10 @@ public class DonationService {
     @Transactional(readOnly = true)
     public List<Donation> getDonationsByUser(Long userId) {
         return donationRepository.findByUserUserId(userId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<LocalDateTime> getDonationDatesByUser(Long userId) {
+        return donationRepository.findDonationDatesByUserId(userId);
     }
 }

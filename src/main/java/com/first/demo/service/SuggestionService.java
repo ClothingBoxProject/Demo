@@ -1,6 +1,7 @@
 package com.first.demo.service;
 
 import com.first.demo.domain.Suggestion;
+import com.first.demo.domain.SuggestionStatus; // SuggestionStatus ENUM 임포트
 import com.first.demo.domain.User;
 import com.first.demo.repository.SuggestionRepository;
 import com.first.demo.repository.UserRepository;
@@ -31,6 +32,7 @@ public class SuggestionService {
         suggestion.setUser(user);
         suggestion.setCategory(category);
         suggestion.setSuggestion(suggestionText);
+        suggestion.setStatus(SuggestionStatus.PENDING); // 기본 상태는 PENDING
         return suggestionRepository.save(suggestion);
     }
 
@@ -40,7 +42,7 @@ public class SuggestionService {
     }
 
     @Transactional
-    public Suggestion updateSuggestionStatus(Long suggestionId, String status, String adminComments) {
+    public Suggestion updateSuggestionStatus(Long suggestionId, SuggestionStatus status, String adminComments) {
         Optional<Suggestion> suggestionOptional = suggestionRepository.findById(suggestionId);
         if (suggestionOptional.isEmpty()) {
             throw new IllegalArgumentException("해당 제안이 존재하지 않습니다.");
@@ -48,13 +50,8 @@ public class SuggestionService {
 
         Suggestion suggestion = suggestionOptional.get();
 
-        // 상태 값 검증 추가
-        if (!"PENDING".equals(status) && !"APPROVED".equals(status) && !"REJECTED".equals(status)) {
-            throw new IllegalArgumentException("유효하지 않은 상태 값입니다: " + status);
-        }
-
-        // 특정 상태 변경 시 검증 추가
-        if ("REJECTED".equals(status) && (adminComments == null || adminComments.trim().isEmpty())) {
+        // REJECTED 상태일 때 adminComments 필수
+        if (status == SuggestionStatus.REJECTED && (adminComments == null || adminComments.trim().isEmpty())) {
             throw new IllegalArgumentException("제안을 거절할 때는 관리자 코멘트가 필요합니다.");
         }
 
@@ -64,7 +61,7 @@ public class SuggestionService {
     }
 
     @Transactional(readOnly = true)
-    public List<Suggestion> getSuggestionsByStatus(String status) {
+    public List<Suggestion> getSuggestionsByStatus(SuggestionStatus status) {
         return suggestionRepository.findByStatus(status);
     }
 
@@ -73,4 +70,3 @@ public class SuggestionService {
         return suggestionRepository.findByCategory(category);
     }
 }
-
