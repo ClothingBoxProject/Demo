@@ -40,21 +40,4 @@ const App = () => {
   );
 };
 
-// function App() {
-//   const [message, setMessage] = useState('');
-//
-//   useEffect(() => {
-//     axios.get('http://localhost:8080/api/message') //SprngBoot의 API호출
-//       .then(response => setMessage(response.data))
-//       .catch(error => console.error(error));
-//   }, []);
-//
-//   return (
-//     <div>
-//       <h1>Spring Boot와 React 연동</h1>
-//       <p>{message}</p>
-//     </div>
-//   );
-// }
-
 export default App
