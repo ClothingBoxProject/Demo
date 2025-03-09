@@ -1,7 +1,7 @@
 package com.first.demo.service;
 
-import com.first.demo.domain.Donation;
-import com.first.demo.domain.User;
+import com.first.demo.dao.Donation;
+import com.first.demo.dao.User;
 import com.first.demo.repository.DonationRepository;
 import com.first.demo.repository.UserRepository;
 import org.springframework.stereotype.Service;

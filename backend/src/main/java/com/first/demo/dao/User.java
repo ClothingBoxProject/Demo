@@ -1,10 +1,12 @@
-package com.first.demo.domain;
+package com.first.demo.dao;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -12,6 +14,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class User {
 
     @Id
@@ -19,7 +22,7 @@ public class User {
     private Long userId;
 
     @Column(nullable = false, length = 50, unique = true)
-    private String username;
+    private String userName;
 
     @Column(nullable = false, length = 255)
     private String passwordHash;
@@ -27,16 +30,20 @@ public class User {
     @Column(nullable = false, length = 100, unique = true)
     private String email;
 
+    @Builder.Default
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    private LocalDateTime modifiedAt;
+    @Builder.Default
+    private LocalDateTime modifiedAt = null; //음 객체가 생성될 때는 수정된 적이 없으므로 nullable으로 수정
 
+    @Builder.Default
     @Column(nullable = false)
-    private Boolean isActive;
+    private Boolean isActive = true;
 
+    @Builder.Default
     @Column(nullable = false, length = 20)
-    private String role;
+    private String role = "USER";
 
     @PrePersist
     protected void onCreate() {

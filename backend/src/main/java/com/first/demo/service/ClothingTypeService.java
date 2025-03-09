@@ -1,6 +1,6 @@
 package com.first.demo.service;
 
-import com.first.demo.domain.ClothingType;
+import com.first.demo.dao.ClothingType;
 import com.first.demo.repository.ClothingTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

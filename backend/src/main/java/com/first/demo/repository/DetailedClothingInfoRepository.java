@@ -1,8 +1,9 @@
 package com.first.demo.repository;
 
-import com.first.demo.domain.DetailedClothingInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import com.first.demo.dao.DetailedClothingInfo;
 
 import java.util.List;
 

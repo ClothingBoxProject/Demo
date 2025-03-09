@@ -1,7 +1,7 @@
 package com.first.demo.controller;
 
-import com.first.demo.domain.Suggestion;
-import com.first.demo.domain.SuggestionStatus;
+import com.first.demo.dao.Suggestion;
+import com.first.demo.dao.SuggestionStatus;
 import com.first.demo.service.SuggestionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

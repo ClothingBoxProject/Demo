@@ -1,6 +1,6 @@
 package com.first.demo.controller;
 
-import com.first.demo.domain.Donation;
+import com.first.demo.dao.Donation;
 import com.first.demo.service.DonationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

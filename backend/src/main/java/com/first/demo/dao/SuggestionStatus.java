@@ -1,4 +1,4 @@
-package com.first.demo.domain;
+package com.first.demo.dao;
 
 public enum SuggestionStatus {
     PENDING, APPROVED, REJECTED;

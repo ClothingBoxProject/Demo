@@ -1,9 +1,11 @@
 package com.first.demo.repository;
 
-import com.first.demo.domain.Suggestion;
-import com.first.demo.domain.SuggestionStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import com.first.demo.dao.Suggestion;
+import com.first.demo.dao.SuggestionStatus;
+
 import java.util.List;
 
 @Repository

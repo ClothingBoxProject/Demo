@@ -1,9 +1,10 @@
 package com.first.demo.repository;
 
-import com.first.demo.domain.Donation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import com.first.demo.dao.Donation;
 
 import java.time.LocalDateTime;
 import java.util.List;

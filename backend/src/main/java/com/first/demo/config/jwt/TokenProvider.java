@@ -10,7 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
-import com.first.demo.domain.User;
+import com.first.demo.dao.User;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Header;

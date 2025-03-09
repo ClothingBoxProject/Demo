@@ -1,4 +1,4 @@
-package com.first.demo.domain;
+package com.first.demo.dao;
 
 import jakarta.persistence.*;
 import lombok.Getter;

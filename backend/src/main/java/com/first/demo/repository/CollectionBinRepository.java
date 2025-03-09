@@ -1,9 +1,10 @@
 package com.first.demo.repository;
 
-import com.first.demo.domain.CollectionBin;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.first.demo.dao.CollectionBin;
 
 public interface CollectionBinRepository extends JpaRepository<CollectionBin, Long> {
     

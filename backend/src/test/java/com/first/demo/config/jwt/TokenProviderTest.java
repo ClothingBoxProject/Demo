@@ -8,7 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.first.demo.domain.User;
+import com.first.demo.DemoApplication;
+import com.first.demo.dao.User;
 import com.first.demo.repository.UserRepository;
 
 import java.time.Duration;
@@ -17,7 +18,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+@SpringBootTest(classes = DemoApplication.class)
 class TokenProviderTest {
 
     @Autowired
@@ -34,21 +35,20 @@ class TokenProviderTest {
     void generateToken() {
         // given
         User testUser = userRepository.save(User.builder()
+                .userName("testuser")
                 .email("user@gmail.com")
-                .password("test")
+                .passwordHash("test") //실제로 RDS에 등록되는 테스트 코드이다.
+                .role("USER")
                 .build());
-
         // when
         String token = tokenProvider.generateToken(testUser, Duration.ofDays(14));
-
         // then
         Long userId = Jwts.parser()
                 .setSigningKey(jwtProperties.getSecretKey())
                 .parseClaimsJws(token)
                 .getBody()
                 .get("id", Long.class);
-
-        assertThat(userId).isEqualTo(testUser.getId());
+        assertThat(userId).isEqualTo(testUser.getUserId());
     }
 
     @DisplayName("validToken(): 만료된 토큰인 경우에 유효성 검증에 실패한다.")
@@ -59,10 +59,8 @@ class TokenProviderTest {
                 .expiration(new Date(new Date().getTime() - Duration.ofDays(7).toMillis()))
                 .build()
                 .createToken(jwtProperties);
-
         // when
         boolean result = tokenProvider.validToken(token);
-
         // then
         assertThat(result).isFalse();
     }

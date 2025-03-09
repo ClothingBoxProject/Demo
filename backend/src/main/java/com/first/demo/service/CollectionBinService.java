@@ -1,6 +1,6 @@
 package com.first.demo.service;
 
-import com.first.demo.domain.CollectionBin;
+import com.first.demo.dao.CollectionBin;
 import com.first.demo.repository.CollectionBinRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,6 @@
 package com.first.demo.controller;
 
-import com.first.demo.domain.ClothingType;
+import com.first.demo.dao.ClothingType;
 import com.first.demo.service.ClothingTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

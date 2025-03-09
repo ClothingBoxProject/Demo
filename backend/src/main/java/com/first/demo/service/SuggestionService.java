@@ -1,8 +1,8 @@
 package com.first.demo.service;
 
-import com.first.demo.domain.Suggestion;
-import com.first.demo.domain.SuggestionStatus; // SuggestionStatus ENUM 임포트
-import com.first.demo.domain.User;
+import com.first.demo.dao.Suggestion;
+import com.first.demo.dao.SuggestionStatus;
+import com.first.demo.dao.User;
 import com.first.demo.repository.SuggestionRepository;
 import com.first.demo.repository.UserRepository;
 import org.springframework.stereotype.Service;
