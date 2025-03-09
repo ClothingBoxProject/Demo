@@ -1,0 +1,104 @@
+/* 페이지 전체 스타일 */
+.page-container {
+  text-align: center;
+}
+
+/* 메인 콘텐츠 스타일 */
+.main-content {
+  margin-top: 70px;
+  padding: 2em;
+}
+
+.main-content h1 {
+  font-size: 2.5em;
+  color: rgba(46, 139, 87, 0.8);
+  font-weight: bold;
+}
+
+/* 슬라이드 컨테이너 */
+.slider-container {
+  position: relative;
+  width: 90%;
+  max-width: 1000px;
+  margin: auto;
+  overflow: hidden;
+}
+
+/* 슬라이드 목록 */
+.slides {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+/* 개별 슬라이드 */
+.slide {
+  min-width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5em;
+  box-sizing: border-box;
+}
+.slide img {
+  width: 50%;
+  border-radius: 10px;
+  margin-right: 2em;
+}
+.slide-text {
+  text-align: left;
+}
+.slide-text h2 {
+  font-size: 1.8em;
+  color: #2e8b57;
+  margin-bottom: 0.5em;
+}
+.slide-text p {
+  font-size: 1.1em;
+  color: #555;
+  line-height: 1.6;
+}
+
+/* 슬라이드 버튼 */
+.slider-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(46, 139, 87, 0.8);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.3s;
+}
+.slider-btn:hover {
+  opacity: 1;
+}
+.slider-btn.left {
+  left: 2em;
+}
+.slider-btn.right {
+  right: 2em;
+}
+
+/* 인디케이터 */
+.indicators {
+  display: flex;
+  justify-content: center;
+  margin-top: 1em;
+}
+.indicator {
+  width: 12px;
+  height: 12px;
+  margin: 0 5px;
+  border-radius: 50%;
+  background-color: #ddd;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.indicator.active {
+  background-color: #ff8c00;
+}
+
+

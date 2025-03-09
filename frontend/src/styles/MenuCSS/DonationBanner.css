@@ -1,0 +1,44 @@
+ .donation-value-section {
+   background-color: #f1f8f6;
+   padding: 3em 2em;
+   border-radius: 12px;
+   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+   text-align: center;
+   max-width: 600px;
+   margin: 2em auto;
+   color: #333;
+ }
+
+ .donation-value-section h2 {
+   font-size: 2.5em;
+   color: #2e8b57;
+   margin-bottom: 1em;
+   font-weight: bold;
+ }
+
+ #donation-text {
+  font-size: 1.1em;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 0.5em;
+  white-space: pre-line;
+  word-break: keep-all;
+}
+
+ .learn-more-button {
+   display: inline-block;
+   padding: 0.8em 1.5em;
+   background-color: #2e8b57;
+   color: #fff;
+   text-decoration: none;
+   border: none;
+   border-radius: 8px;
+   font-size: 1em;
+   font-weight: bold;
+   transition: background-color 0.3s, box-shadow 0.3s;
+ }
+
+ .learn-more-button:hover {
+   background-color: #267a4e;
+   box-shadow: 0px 4px 10px rgba(46, 139, 87, 0.3);
+ }

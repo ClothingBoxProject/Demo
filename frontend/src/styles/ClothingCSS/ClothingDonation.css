@@ -1,0 +1,75 @@
+/* 공통 스타일 */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+  color: #333;
+}
+
+/* 검색창 스타일 */
+.search-container {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 2.5em;
+  position: relative;
+}
+
+.search-input {
+  width: 80%;
+  max-width: 600px;
+  padding: 0.8em;
+  border-radius: 30px;
+  border: 2px solid #ccc;
+  font-size: 1em;
+  outline: none;
+  box-sizing: border-box;
+  padding-right: 50px; /* 버튼 공간 확보 */
+}
+
+.search-input:focus {
+  border-color: #2e8b57;
+}
+
+.search-btn {
+  position: absolute;
+  right: 3px; /* 입력창 내부에 붙이기 */
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0.6em 1.2em;
+  border: none;
+  background-color: rgba(46, 139, 87, 0.7); /* 배경색 적용 */
+  color: white; /* 버튼 글자색 */
+  border-radius: 25px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.search-btn:hover {
+  background-color: rgba(46, 139, 87, 1); /* 호버 시 불투명하게 */
+}
+
+/* 콘텐츠 스타일 */
+.content {
+ padding-top: 100px;
+ max-width: 1200px;
+ margin: auto;
+ padding: 2em 1em;
+ text-align: center;
+}
+.content h1 {
+ font-size: 2.5em;
+ color: rgba(46, 139, 87, 0.8);
+ margin-top: 2em;
+}
+.content p{
+ padding-bottom: 1.5em;
+}
+
+/* 제품 리스트 */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5em;
+  margin-top: 1em;
+}

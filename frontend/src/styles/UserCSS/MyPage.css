@@ -1,0 +1,161 @@
+/* 공통 스타일 */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+  color: #333;
+}
+/* 전체 페이지 스타일 */
+.page-container {
+  width: 100%;
+  text-align: center;
+}
+
+/* 프로필 섹션 */
+.user-profile {
+  width: 80%;
+  max-width : 600px;
+  background: #fff;
+  padding: 2em;
+  border-radius: 12px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 프로필 정보 */
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: 1.5em;
+  text-align: left;
+}
+
+/* 프로필 이미지 스타일 */
+.profile-image {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 20px;
+}
+.profile-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  border: none;
+  transition: 0.3s;
+}
+.profile-img:hover {
+  opacity: 0.8;
+}
+
+/* 프로필 텍스트 정보 */
+.profile-info {
+  flex-grow: 1;
+}
+.profile-info h2 {
+  font-size: 1.5em;
+  color: #2e8b57;
+  margin-bottom: 0.3em;
+}
+.profile-info p {
+  font-size: 1em;
+  color: #555;
+}
+/* 프로필 정보 입력 필드 스타일 */
+.profile-info label {
+  display: block;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.profile-info input {
+  width: 90%;
+  padding: 8px;
+  margin-top: 1em;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1em;
+}
+
+.profile-info input:disabled {
+  background-color: #f0f0f0;
+  color: #888;
+  cursor: not-allowed;
+}
+
+.edit-container{
+  width : 100%;
+  display: flex;
+  justify-content : flex-end;
+}
+/* 버튼 스타일 */
+.edit-button {
+  margin-top: 1em;
+  margin-right: 2em;
+  padding: 8px 15px;
+  background-color: #2e8b57;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1em;
+  cursor: pointer;
+}
+.edit-button:hover {
+  background-color: #256d46;
+}
+
+/* 활동 통계 */
+.stats-section {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2em;
+}
+.stats-box {
+  flex: 1;
+  padding: 1em;
+  border-radius: 8px;
+  background: #f1f8f6;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+.stats-box h3 {
+  font-size: 1.2em;
+  color: #2e8b57;
+  margin-bottom: 0.3em;
+}
+.stats-box p {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+/* 기부 내역 */
+.donation-history {
+  margin-top: 2em;
+  text-align: left;
+}
+.donation-history h3 {
+  font-size: 1.4em;
+  color: #2e8b57;
+}
+.donation-history ul {
+  list-style: none;
+  padding: 0;
+}
+.donation-history li {
+  font-size: 1em;
+  margin: 0.5em 0;
+  color: #333;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 600px) {
+  .profile-section {
+    flex-direction: column;
+    text-align: center;
+  }
+  .stats-section {
+    flex-direction: column;
+    gap: 1em;
+  }
+}
