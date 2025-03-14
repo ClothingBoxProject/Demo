@@ -2,10 +2,13 @@ package com.first.demo.controller;
 
 import com.first.demo.domain.CollectionBin;
 import com.first.demo.service.CollectionBinService;
+import com.first.demo.service.CSVImporter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,10 +17,12 @@ import java.util.Optional;
 public class CollectionBinController {
 
     private final CollectionBinService collectionBinService;
+    private final CSVImporter csvImporter;
 
     @Autowired
-    public CollectionBinController(CollectionBinService collectionBinService) {
+    public CollectionBinController(CollectionBinService collectionBinService, CSVImporter csvImporter) {
         this.collectionBinService = collectionBinService;
+        this.csvImporter = csvImporter;
     }
 
     // 모든 수거함 조회
@@ -31,7 +36,7 @@ public class CollectionBinController {
     public ResponseEntity<CollectionBin> getCollectionBinById(@PathVariable Long binId) {
         Optional<CollectionBin> collectionBin = collectionBinService.getCollectionBinById(binId);
         return collectionBin.map(ResponseEntity::ok)
-                            .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     // 위치 이름으로 수거함 조회
@@ -64,5 +69,21 @@ public class CollectionBinController {
     public ResponseEntity<Void> deleteCollectionBin(@PathVariable Long binId) {
         collectionBinService.deleteCollectionBin(binId);
         return ResponseEntity.noContent().build();
+    }
+
+    // CSV 파일을 업로드하여 수거함 데이터를 DB에 삽입하는 메서드
+    @PostMapping("/upload-csv")
+    public ResponseEntity<String> uploadCSV(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("파일이 비어있습니다.");
+        }
+
+        try {
+            // CSVImporter 서비스의 importCSV 메서드 호출
+            csvImporter.importCSV(file);
+            return ResponseEntity.ok("CSV 파일이 성공적으로 업로드되었습니다.");
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("CSV 파일 처리 중 오류 발생: " + e.getMessage());
+        }
     }
 }
