@@ -2,11 +2,11 @@ package com.first.demo.service;
 
 import com.first.demo.dao.CollectionBin;
 import com.first.demo.repository.CollectionBinRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CollectionBinService {
@@ -24,9 +24,11 @@ public class CollectionBinService {
     }
 
     // 수거함 ID로 조회
-    public Optional<CollectionBin> getCollectionBinById(Long binId) {
-        return collectionBinRepository.findById(binId);
+    public CollectionBin getCollectionBinById(Long binId) {
+        return collectionBinRepository.findById(binId)
+                .orElseThrow(() -> new EntityNotFoundException("Collection bin not found with id: " + binId));
     }
+
 
     // 위치 이름으로 수거함을 조회하는 메서드
     public List<CollectionBin> getCollectionBinsByLocationName(String locationName) {
