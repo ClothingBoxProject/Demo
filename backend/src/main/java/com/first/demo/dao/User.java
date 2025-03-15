@@ -21,8 +21,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @Column(nullable = false, length = 50, unique = true)
-    private String userName;
+    @Builder.Default
+    @Column(nullable = false, length = 50) 
+    private String userName = "defaultUser";
 
     @Column(nullable = false, length = 255)
     private String passwordHash;
@@ -35,7 +36,7 @@ public class User {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Builder.Default
-    private LocalDateTime modifiedAt = null; //음 객체가 생성될 때는 수정된 적이 없으므로 nullable으로 수정
+    private LocalDateTime modifiedAt = null; //객체가 생성될 때는 수정된 적이 없으므로 nullable으로 수정
 
     @Builder.Default
     @Column(nullable = false)

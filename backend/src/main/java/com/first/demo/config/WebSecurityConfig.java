@@ -1,14 +1,15 @@
+//WebSecurityConfig.java
 package com.first.demo.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 
 import com.first.demo.service.UserDetailService;
 
@@ -30,16 +31,17 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
-                .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/login", "/api/auth/signup").permitAll() // /login, /signup, /user → 모든 사용자 접근 가능 (permitAll())
-                .anyRequest().authenticated()) // 그 외 요청 → 인증 필요 (authenticated())
-                .logout(logout -> logout // 로그아웃 설정, 로그아웃 후 /login으로 이동 & 세션 무효화 
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/donations/**", "/api/users/**", "/api/suggestions/**").authenticated() // 🔹 인증이 필요한 요청
+                .anyRequest().permitAll() // 그 외 요청 허용
+            )
+            .logout(logout -> logout
                 .logoutSuccessUrl("/api/auth/login")
-                .invalidateHttpSession(true))
-                .csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화
-                .build();
+                .invalidateHttpSession(true)
+            )
+            .csrf(csrf -> csrf.disable()).build();
     }
-
+    
     // 인증 매니저 및 비밀번호 암호화 설정
     @Bean
     public AuthenticationManager authenticationManager(

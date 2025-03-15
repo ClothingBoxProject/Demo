@@ -10,56 +10,64 @@ const AuthForm = ({ type }) => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  // 폼 제출 처리
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-
-    if (type === "findId") {
-          // 아이디 찾기 로직
-          const user = users.find((user) => user.email === email);
-          if (user) {
-            navigate("/find-id-result", { state: { foundId: user.email } });
-          } else {
-            setError("해당 이메일로 등록된 아이디를 찾을 수 없습니다.");
-          }
-          return;
+  // 회원가입 요청 (백엔드 API 연결)
+  const handleRegister = async () => {
+    try {
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      if (response.ok) {
+        alert("회원가입 성공! 로그인 페이지로 이동합니다.");
+        navigate("/login"); // 성공 시, login 페이지로 이동
+      } else {
+        const errorMessage = await response.text();
+        setError(errorMessage || "중복된 이메일입니다.");
+      }
+    } catch (error) {
+      console.error("회원가입 중 오류 발생:", error);
+      setError("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
     }
+  };
+  // 로그인 요청 (백엔드 API 연결)
+  const handleLogin = async () => {
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (type === "login") {
-      const user = users.find((user) => user.email === email && user.password === password);
-      if (user) {
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem("accessToken", data.accessToken); // accessToken 저장
         alert("로그인 성공!");
-        navigate("/main");
+        navigate("/"); // 메인 페이지로 이동
       } else {
-        setError("이메일 또는 비밀번호가 잘못되었습니다.");
+        const errorMessage = await response.text();
+        setError(errorMessage || "이메일 또는 비밀번호가 잘못되었습니다.");
       }
-    } else if (type === "register") {
-      if (users.some((user) => user.email === email)) {
-        setError("이미 존재하는 이메일입니다.");
-      } else {
-        users.push({ email, password });
-        localStorage.setItem("users", JSON.stringify(users));
-        alert("회원가입 성공! 로그인 해주세요.");
-        navigate("/login");
-      }
-    } else if (type === "findId") {
-      const user = users.find((user) => user.email === email);
-      if (user) {
-        alert(`아이디는 ${user.email}입니다.`);
-      } else {
-        setError("해당 이메일로 등록된 아이디가 없습니다.");
-      }
-    } else if (type === "resetPassword") {
-      const userIndex = users.findIndex((user) => user.email === email);
-      if (userIndex !== -1) {
-        users[userIndex].password = password;
-        localStorage.setItem("users", JSON.stringify(users));
-        alert("비밀번호 변경 완료! 로그인 해주세요.");
-        navigate("/login");
-      } else {
-        setError("이메일을 찾을 수 없습니다.");
-      }
+    } catch (error) {
+      console.error("로그인 중 오류 발생:", error);
+      setError("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    }
+  };
+   
+
+  // 폼 제출 처리
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (type === "register") {
+      await handleRegister();
+      return;
+    }
+    else if (type === "login") {
+      await handleLogin();
     }
   };
 

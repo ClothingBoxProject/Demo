@@ -84,12 +84,11 @@ body, html {
 }
 
 /* 오류 메시지 */
-.error {
-  color: red;
-  font-size: 0.9em;
-  margin-bottom: 1em;
+.form-container .error {
+  color: #E54444 !important;
+  font-size: 0.8em !important;
+  margin-bottom: 1em !important;
 }
-
 
 .alternate-link span {
  color: #888;

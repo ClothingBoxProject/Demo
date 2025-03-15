@@ -37,7 +37,7 @@ class TokenProviderTest {
         User testUser = userRepository.save(User.builder()
                 .userName("testuser")
                 .email("user@gmail.com")
-                .passwordHash("test") //실제로 RDS에 등록되는 테스트 코드이다.
+                .passwordHash("test") 
                 .role("USER")
                 .build());
         // when
@@ -60,9 +60,9 @@ class TokenProviderTest {
                 .build()
                 .createToken(jwtProperties);
         // when
-        boolean result = tokenProvider.validToken(token);
+        TokenProvider.TokenValidationResult result = tokenProvider.validateToken(token);
         // then
-        assertThat(result).isFalse();
+        assertThat(result).isEqualTo(TokenProvider.TokenValidationResult.EXPIRED);
     }
 
 
@@ -74,10 +74,10 @@ class TokenProviderTest {
                 .createToken(jwtProperties);
 
         // when
-        boolean result = tokenProvider.validToken(token);
+        TokenProvider.TokenValidationResult result = tokenProvider.validateToken(token);
 
         // then
-        assertThat(result).isTrue();
+        assertThat(result).isEqualTo(TokenProvider.TokenValidationResult.VALID);
     }
 
 

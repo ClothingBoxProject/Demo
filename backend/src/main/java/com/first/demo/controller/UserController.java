@@ -21,7 +21,8 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         try {
-            User user = userService.getUserById(id);
+            User user = userService.getUserById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
             return ResponseEntity.ok(user);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build(); // 404 Not Found : 리소스(사용자,데이터)가 존재하지 않을 때 

@@ -15,12 +15,9 @@ import static java.util.Collections.emptyMap;
 // JwtFactory : 테스트를 위한 JWT 생성용 클래스 
 @Getter
 public class JwtFactory {
-
     private String subject = "test@email.com";
-
     private Date issuedAt = new Date();
-
-    private Date expiration = new Date(new Date().getTime() + Duration.ofDays(14).toMillis());
+    private Date expiration = new Date(System.currentTimeMillis() + Duration.ofDays(14).toMillis());
     // 만료기간이 현재 시간 + 14일로 설정됨. 
 
     private Map<String, Object> claims = emptyMap();
