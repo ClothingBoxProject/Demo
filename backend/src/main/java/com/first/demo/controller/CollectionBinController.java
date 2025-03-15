@@ -3,7 +3,9 @@ package com.first.demo.controller;
 import com.first.demo.domain.CollectionBin;
 import com.first.demo.service.CollectionBinService;
 import com.first.demo.service.CSVImporter;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,12 +33,15 @@ public class CollectionBinController {
         return collectionBinService.getAllCollectionBins();
     }
 
-    // 수거함 ID로 조회
+    // 수거함 ID로 조회 -> Optional을 직접 처리하도록 변경(데이터 없으면 예외 발생)
     @GetMapping("/{binId}")
-    public ResponseEntity<CollectionBin> getCollectionBinById(@PathVariable Long binId) {
-        Optional<CollectionBin> collectionBin = collectionBinService.getCollectionBinById(binId);
-        return collectionBin.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<?> getCollectionBinById(@PathVariable Long binId) {
+        try {
+            CollectionBin collectionBin = collectionBinService.getCollectionBinById(binId);
+            return ResponseEntity.ok(collectionBin);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     // 위치 이름으로 수거함 조회
