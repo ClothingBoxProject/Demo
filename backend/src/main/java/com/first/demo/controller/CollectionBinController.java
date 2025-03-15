@@ -26,7 +26,7 @@ public class CollectionBinController {
         this.csvImporter = csvImporter;
     }
 
-    // 모든 수거함 조회
+    @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping
     public List<CollectionBin> getAllCollectionBins() {
         return collectionBinService.getAllCollectionBins();
