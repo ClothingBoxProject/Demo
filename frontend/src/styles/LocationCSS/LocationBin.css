@@ -2,23 +2,7 @@
 .page-container {
   width: 100%;
   text-align: center;
-}
-
-/* 제목 스타일 */
-.main-content {
-  max-width: 800px;
-  margin: auto;
-  padding: 2em 1em;
-}
-.main-content h1 {
-  font-size: 2.5em;
-  color: rgba(46, 139, 87, 0.8);
-  font-weight: bold;
-}
-.main-content p {
-  font-size: 1.2em;
-  color: #555;
-  line-height: 1.6;
+  position: relative;
 }
 
 /* Kakao 지도 */
@@ -28,6 +12,21 @@
   border-radius: 10px;
   border: 1px solid rgba(128, 128, 128, 0.3);
   margin: 2em 0;
+  position: relative;
+  transition: margin-top 0.3s ease; /* 애니메이션 효과 추가 */
+}
+
+/* 셀렉트 박스 */
+.select-container {
+  position: absolute; /* 맵 위에 위치하게 설정 */
+  left: 50%;
+  transform: translateX(-50%); /* 중앙 정렬 */
+  z-index: 9999; /* 셀렉트 박스가 맵 위에 위치하도록 설정 */
+  width: 300px;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.9); /* 배경을 반투명하게 설정 */
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15); /* 그림자 추가 */
 }
 
 /* 설명 텍스트 스타일 */
@@ -42,26 +41,9 @@
   border-radius: 10px;
 }
 
-/* 수정 제안 스타일 */
-.suggestion_text {
-  margin-top: 1.5em;
-  font-size: 1em;
-  color: #aaa;
-}
-.suggestion {
-  margin-top: 1em;
-  font-size: 1em;
-  color: #777;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
 /* 반응형 디자인 */
 @media (max-width: 768px) {
-  .main-content h1 {
-    font-size: 2em;
-  }
-  .main-content p {
-    font-size: 1em;
+  .select-container {
+    width: 80%; /* 모바일에서 셀렉트 박스 너비 조정 */
   }
 }
