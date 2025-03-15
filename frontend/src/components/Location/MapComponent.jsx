@@ -1,9 +1,17 @@
 import React, { useEffect } from "react";
+<<<<<<< HEAD
 /* Kakao API 키(=YOUR_KAKAO_API_KEY)를 본인의 키로 변경하여 실제로 사용*/
 const MapComponent = () => {
   useEffect(() => {
     const script = document.createElement("script");
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_KAKAO_API_KEY&autoload=false`;
+=======
+
+const MapComponent = () => {
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${import.meta.env.VITE_KAKAO_API_KEY}&autoload=false`;
+>>>>>>> b0a25e8 (25_3_15_change_map_component)
     script.async = true;
     document.head.appendChild(script);
 
