@@ -1,19 +1,15 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import "../../styles/UserCSS/MyPage.css";
 import Header from "../Menu/Header.jsx";
 import Footer from "../Menu/Footer.jsx";
 import clothImage from "../../assets/cloth.jpg";
+import { getAccessToken } from "../../utils/db"; 
+import axios from "axios";
+
 
 const MyPage = () => {
-  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
-  const [user, setUser] = useState({
-    id: null,
-    name: "",
-    email: "",
-    profileImage: clothImage,
-  });
+  const [user, setUser] = useState(null);
 
   // 기부 내역 데이터
   const donationHistory = [
@@ -30,51 +26,50 @@ const MyPage = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetchWithAuth("/api/users/me", { method: "GET" }, navigate);
-        if (!response.ok) {
-          throw new Error("사용자 정보를 불러오는 데 실패했습니다.");
-        }
-        const data = await response.json();
-        setUser({
-          id: data.id,
-          name: data.userName,
-          email: data.email,
-          profileImage: clothImage,
+        const token = await getAccessToken();
+        const response = await axios.get("/api/users/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
         });
+        setUser(response.data);
       } catch (error) {
-        console.error("Error:", error);
+        console.error("사용자 정보를 가져오는 중 오류 발생:", error);
+        if (error.response && error.response.status === 401) {
+          navigate("/"); // 401 발생 시 메인으로 이동
+        }
       }
     };
     fetchUserData();
-  }, [navigate]);
+  },[]);
 
   // 사용자 정보 수정
   const handleEdit = async () => {
     if (isEditing) {
-      if (window.confirm("정보를 수정하시겠습니까?")) {
         try {
-          const response = await fetchWithAuth("/api/users/me", {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userName: user.name, email: user.email }),
-          }, navigate);
-
-          if (!response.ok) {
-            throw new Error("사용자 정보를 업데이트하는 데 실패했습니다.");
-          }
-
-          const updatedUser = await response.json();
-          setUser(updatedUser);
-          alert("정보가 성공적으로 수정되었습니다.");
+          const token = await getAccessToken();
+          const response = await axios.patch(
+            "/api/users/me",
+            { userName: user.userName, email: user.email }, // 변경할 필드
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+              withCredentials: true 
+            }
+          );
+          setUser(response.data);
           setIsEditing(false);
         } catch (error) {
           console.error("Error:", error);
         }
-      }
     } else {
       setIsEditing(true);
     }
   };
+
+  if (!user) return <div>Loading...</div>;
 
   return (
     <div className="page-container">
@@ -83,7 +78,7 @@ const MyPage = () => {
         <div className="profile-section">
           <div className="profile-image">
               <label htmlFor="file-upload">
-                <img src={user.profileImage} alt="프로필 사진" className="profile-img" />
+                <img src={clothImage} alt="프로필 사진" className="profile-img" />
               </label>
               <input type="file" id="file-upload" accept="image/*" style={{ display: "none" }}/>
           </div>
@@ -91,10 +86,20 @@ const MyPage = () => {
           <div className="profile-info">
               <h2>프로필 정보</h2>
               <label>이름
-              <input type="text" value={user.name} onChange={(e) => setUser({ ...user, name: e.target.value })} disabled={!isEditing} />
+              <input
+                type="text"
+                value={user.userName}
+                onChange={(e) => setUser({ ...user, userName: e.target.value })}
+                disabled={!isEditing}
+              />
               </label>
               <label>이메일
-              <input type="email" value={user.email} onChange={(e) => setUser({ ...user, email: e.target.value })} disabled={!isEditing} />
+              <input 
+                type="email" 
+                value={user.email} 
+                onChange={(e) => setUser({ ...user, email: e.target.value })} 
+                disabled={!isEditing} 
+              />
               </label>
               <div className="edit-container">
                 <button className="edit-button" onClick={handleEdit}>

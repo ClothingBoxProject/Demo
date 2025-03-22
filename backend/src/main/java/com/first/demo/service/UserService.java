@@ -68,9 +68,7 @@ public class UserService {
     }
 
     // 회원업데이트
-    public User updateUser(Long id, Map<String, Object> updates) {
-        User user = userRepository.findById(id)
-            .orElseThrow(() -> new NoSuchElementException("User not found"));
+    public User updateUser(User user, Map<String, Object> updates) {
             updates.forEach((key, value) -> {
                 Field field = ReflectionUtils.findField(User.class, key);
                 if (field != null) {

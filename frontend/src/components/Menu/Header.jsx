@@ -35,8 +35,11 @@ const Header = () => {
           { label: "기타", link: "/others" },
         ]}
       />
-
-    <button onClick={() => handleNavigation("/about")}>About</button>
+      {authStatus === "loggedIn" ? (
+        <button onClick={() => handleNavigation("/mypage")}>마이페이지</button>
+      ) : (
+        <button onClick={() => handleNavigation("/clothing-impact")}>더보기</button>
+      )}
     </div>
   );
 };
