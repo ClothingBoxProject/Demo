@@ -2,7 +2,6 @@
 package com.first.demo.config;
 
 import java.io.IOException;
-import java.util.Set;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,25 +26,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private final static String HEADER_AUTHORIZATION = "Authorization";
     private final static String TOKEN_PREFIX = "Bearer ";
     
-    private static final Set<String> EXCLUDED_PATHS = Set.of(
-        "/api/auth/signup",
-        "/api/auth/login",
-        "/api/auth/logout",
-        "/api/auth/refresh" // 회원가입, 로그인, 로그아웃, 리프레시 
-    );
-
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain)  throws ServletException, IOException {
         
-        String requestURI = request.getRequestURI();
-        // 예외 URI라면 필터 건너뛰기
-        if (EXCLUDED_PATHS.contains(requestURI)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
         // 요청 헤더의 Authorization 키의 값 조회 
         String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
         // 가져온 값에서 접두사를 제거하고 jwt 토큰만 남기기 
@@ -59,10 +45,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         switch (result) {
             case VALID -> {
-                Authentication authentication = tokenProvider.getAuthentication(token); 
-                // 토큰 기반으로 인증 정보 가져오는 메서드
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                // Spring Security의 SecurityContext에 Authentication 객체를 저장
+                Authentication authentication = tokenProvider.getAuthentication(token); // 토큰 기반으로 인증 정보 가져오는 메서드
+                SecurityContextHolder.getContext().setAuthentication(authentication); // Spring Security의 SecurityContext에 Authentication 객체를 저장
             }
             case EXPIRED -> {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 응답 반환 (액세스 토큰 만료)
@@ -75,7 +59,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 return;
             }
             case ERROR -> {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // 500 응답 반환 (내부 서버 오류류)
                 response.getWriter().write("Internal server error: token validation failed");
                 return;
             }
@@ -85,7 +69,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 return;
             }
         }
-
         filterChain.doFilter(request, response);
         // 인증이 완료된 상태로 요청을 다음 필터 또는 컨트롤러로 전달 
     }

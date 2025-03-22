@@ -36,8 +36,7 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("http://localhost:*"));
-        //configuration.setAllowedOrigins(List.of("http://localhost:5174", "http://localhost:5173")); // React 개발 서버 허용
+        configuration.setAllowedOrigins(List.of("http://localhost:5174", "http://localhost:5173")); // React 개발 서버 허용
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH")); // 허용할 HTTP 메서드
         configuration.setAllowedHeaders(List.of("*")); // 모든 헤더 허용
         configuration.setAllowCredentials(true); // 인증 정보 포함한 요청 허용

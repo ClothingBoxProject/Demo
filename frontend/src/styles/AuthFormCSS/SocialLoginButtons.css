@@ -1,0 +1,86 @@
+.social-login-section {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 1.2rem;
+}
+.social-btn-wrapper {
+    display: flex;
+    width: 70%;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 0px auto;
+}
+
+.social-btn {
+    display: flex;
+    align-items: center;
+    height: 56px;
+    border-radius: 7px;
+    padding: 0 20px;
+    margin: 7px auto;
+    cursor: pointer;
+    transition: filter 0.2s ease-in-out;
+    width: 100%;
+    max-width: 360px;
+}
+  
+.icon-wrapper {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+      
+.icon-wrapper img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+  
+.btn-text {
+    flex: 1;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    margin-left: 16px;
+}
+  
+.icon-wrapper.google-icon img {
+    margin-top: 1px;
+  }
+  
+  .icon-wrapper.kakao-icon img {
+    margin-top: 3px;
+  }
+  
+  .icon-wrapper.naver-icon img {
+    margin-top: 0px;
+  }
+  
+  /* 브랜드별 배경색 */
+  .social-btn.kakao {
+    background-color: #ffeb3b;
+  }
+  
+  .social-btn.google {
+    background-color: #f2f2f2;
+  }
+  
+  .social-btn.naver {
+    background-color: #00c73c;
+  }
+  
+  .social-btn.kakao:hover {
+    background-color: #eedc00;
+  }
+  .social-btn.google:hover {
+    background-color: #e6e6e6;
+  }
+  .social-btn.naver:hover {
+    background-color: #00b336;
+  } 
+  

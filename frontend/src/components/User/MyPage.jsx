@@ -5,11 +5,12 @@ import Footer from "../Menu/Footer.jsx";
 import clothImage from "../../assets/cloth.jpg";
 import { getAccessToken } from "../../utils/db"; 
 import axios from "axios";
-
+import { useNavigate } from "react-router-dom"; // 추가
 
 const MyPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   // 기부 내역 데이터
   const donationHistory = [

@@ -6,6 +6,7 @@ import { AuthContext } from "../../contexts/AuthContext";
 import Header from "../Menu/Header.jsx";
 import Footer from "../Menu/Footer.jsx";
 import axios from "axios";
+import SocialLoginButtons from "./SocialLoginButtons";
 
 const AuthForm = ({ type }) => {
   const navigate = useNavigate();
@@ -81,7 +82,12 @@ const AuthForm = ({ type }) => {
                 required />
             )}
             {(type === "login" || type === "register" || type === "resetPassword") && (
-              <input type="password" placeholder="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} required />
+              <input 
+              type="password" 
+              placeholder="비밀번호" 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)} 
+              required />
             )}
             {error && <p className="error">{error}</p>}
             <button type="submit">
@@ -91,6 +97,12 @@ const AuthForm = ({ type }) => {
               {type === "resetPassword" && "비밀번호 변경"}
             </button>
           </form>
+
+          {type === "login" && (
+            <SocialLoginButtons handleOAuthLogin={(provider) => {
+              window.location.href = `http://localhost:8080/oauth2/authorization/${provider}`;
+            }} />
+          )}
 
           <div className="toggle">
             {type === "login" && (
