@@ -1,41 +1,44 @@
 //AuthController.java
 package com.first.demo.controller;
 
-import java.time.Duration;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.first.demo.config.jwt.TokenProvider;
-import com.first.demo.dao.RefreshToken;
-import com.first.demo.dao.User;
+import com.first.demo.dao.CustomUserDetails;
 import com.first.demo.dto.AddUserRequest;
 import com.first.demo.dto.LoginRequest;
-import com.first.demo.repository.RefreshTokenRepository;
-import com.first.demo.service.TokenService;
+import com.first.demo.exception.RefreshTokenException;
+import com.first.demo.service.RefreshTokenService;
 import com.first.demo.service.UserService;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @RestController // 메서드의 반환 값이 JSON,Response Body(@Controller는 View 반환)
 @RequestMapping("/api/auth")
 public class AuthController {
 
     private final UserService userService;
-    private final TokenService tokenService;
-    private final TokenProvider tokenProvider; 
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenService refreshTokenService;
+    private final AuthenticationManager authenticationManager;
 
     @Autowired
-    public AuthController(UserService userService, TokenProvider tokenProvider, TokenService tokenService, RefreshTokenRepository refreshTokenRepository) {
+    public AuthController(UserService userService, RefreshTokenService refreshTokenService, AuthenticationManager authenticationManager) {
         this.userService = userService;
-        this.tokenProvider = tokenProvider;
-        this.tokenService = tokenService;
-        this.refreshTokenRepository = refreshTokenRepository;
+        this.refreshTokenService = refreshTokenService;
+        this.authenticationManager = authenticationManager;
     }
 
     // 회원가입 (POST /api/auth/signup)
@@ -45,33 +48,53 @@ public class AuthController {
             Long userId = userService.createUser(request);
             return ResponseEntity.ok("회원가입 성공! User ID: " + userId);
         } catch (IllegalArgumentException e) {
-            // return ResponseEntity.badRequest().build();
             return ResponseEntity.status(400).body("중복된 이메일입니다."); // 400 Bad Request : 클라이언트 요청이 잘못됨(에러 메세지 포함)
+        } catch (Exception e) { 
+            return ResponseEntity.status(500).body("서버 내부 오류가 발생했습니다.");
         }
     }
 
-    // 로그인 (POST /api/auth/login)
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         try {
-            User user = userService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
+            UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword());
+            Authentication authentication = authenticationManager.authenticate(authToken);
 
-            // 기존 Refresh Token 확인 및 만료 검증
-            RefreshToken refreshTokenEntity = refreshTokenRepository.findByUserId(user.getUserId())
-                .filter(token -> tokenProvider.validateToken(token.getRefreshToken()) == TokenProvider.TokenValidationResult.VALID)
-                .orElseGet(() -> refreshTokenRepository.save(new RefreshToken(user.getUserId(), tokenProvider.generateToken(user, Duration.ofDays(14)))));
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            String accessToken = refreshTokenService.login(userDetails.getUser(), response);
+            return ResponseEntity.ok(Map.of("accessToken", accessToken));
 
-            // 새 Access Token 발급
-            Optional<String> accessToken = tokenService.createNewAccessToken(refreshTokenEntity.getRefreshToken());
-            if (accessToken.isEmpty()) {
-                return ResponseEntity.status(401).body("엑세스 토큰을 발급할 수 없습니다!"); // ERR(401): Access Token 발급 불가능한 경우
-            }
+        } catch (BadCredentialsException e) {  
+            return ResponseEntity.status(404).body("이메일 또는 비밀번호가 잘못되었습니다.");
+        } catch (AuthenticationException e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
+    }
 
-            return ResponseEntity.ok(Map.of(
-                "accessToken", accessToken.get()
-            ));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(401).body(e.getMessage()); // ERR(401) : 매칭이 안되는 경우 
+    // AccessToken 재발급
+    // @CookieValue : 클라이언트가 보낸 쿠키에서 refreshToken값 추출 
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken(@CookieValue(value = "refreshToken", required = true) String refreshToken,
+        HttpServletResponse response) {
+        try {
+            String newAccessToken = refreshTokenService.refreshAccessToken(refreshToken, response);
+            // 새로운 Access Token만 반환 (Refresh Token은 쿠키로 자동 전송)
+            return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
+        } catch (RefreshTokenException e) {
+            return ResponseEntity.status(e.getStatus()).body(e.getMessage());
+        }
+    }
+
+    // 로그아웃 (DELETE /api/auth/logout)
+    @DeleteMapping("/logout")
+    public ResponseEntity<?> logout(@CookieValue(value = "refreshToken", required=false) String refreshToken,
+        HttpServletResponse response) {
+        try {
+            refreshTokenService.logout(refreshToken, response);
+            return ResponseEntity.ok("로그아웃 성공");
+        } catch (RefreshTokenException e) {
+            return ResponseEntity.status(e.getStatus()).body(e.getMessage());
         }
     }
 }

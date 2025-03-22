@@ -8,9 +8,10 @@
   border-bottom: 3px solid rgba(46, 139, 87, 0.4);
 }
 
-.header a {
-  color: #333;
+.header button {
   text-decoration: none;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.95);
   margin: 0 15px;
   padding: 0.5em 0;
   border-radius: 8px;
@@ -19,7 +20,7 @@
   vertical-align: middle;
 }
 
-.header a:hover {
+.header button:hover {
   background-color: rgba(46, 139, 87, 0.1);
   transform: scale(1.05);
 }

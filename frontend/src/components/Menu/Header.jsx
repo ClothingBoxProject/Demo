@@ -1,26 +1,42 @@
-import React from "react";
+// Header.jsx
+import {useContext} from "react";
+import { useNavigate } from "react-router-dom"; 
 import "../../styles/MenuCSS/Header.css";
 import Dropdown from "./Dropdown.jsx";
+import { AuthContext } from "../../contexts/AuthContext";
 
 const Header = () => {
+  const { authStatus, logout} = useContext(AuthContext); 
+  const navigate = useNavigate();
+  
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
+
   return (
     <div className="header">
-      <a href="/login">로그인</a>
-      <a href="/box-location">의류수거함 위치</a>
+      {authStatus === "loggedIn" ? (
+        <button onClick={logout}>로그아웃</button>
+      ) : (
+        <button onClick={() => handleNavigation("/login")}>로그인</button>
+      )}
 
+      <button onClick={() => handleNavigation("/box-location")}>
+        의류수거함 위치
+      </button>
       <Dropdown
         title="기부 가능한 의류"
-        mainLink="/clothing-donation"  // 🔹 추가된 부분
+        mainLink="/clothing-donation"
         items={[
-          { label: "옷", link: "#clothes" },
-          { label: "모자", link: "#hats" },
-          { label: "신발", link: "#shoes" },
-          { label: "이불", link: "#blankets" },
-          { label: "기타", link: "#others" },
+          { label: "옷", link: "/clothes" },
+          { label: "모자", link: "/hats" },
+          { label: "신발", link: "/shoes" },
+          { label: "이불", link: "/blankets" },
+          { label: "기타", link: "/others" },
         ]}
       />
 
-      <a href="/about">About</a>
+    <button onClick={() => handleNavigation("/about")}>About</button>
     </div>
   );
 };

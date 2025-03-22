@@ -1,17 +1,16 @@
 package com.first.demo.config.jwt;
 
 import java.time.Duration;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.first.demo.dao.User;
+import com.first.demo.service.CustomUserDetailsService;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -26,13 +25,15 @@ import io.jsonwebtoken.UnsupportedJwtException;
 public class TokenProvider {
 
     private final JwtProperties jwtProperties;
+    private final CustomUserDetailsService userDetailService;
 
-    @Autowired 
-    public TokenProvider(JwtProperties jwtProperties) {
+    @Autowired // @Autowired를 사용하면, Spring이 JwtProperties를 찾아서 자동으로 주입
+    public TokenProvider(JwtProperties jwtProperties, CustomUserDetailsService userDetailService) {
         this.jwtProperties = jwtProperties;
+        this.userDetailService = userDetailService;
     }
 
-    // 토큰을 생성하는 메서드 중 노출시킬 수 있는 메서드(Public)
+    // 토큰을 생성하는 메서드
     public String generateToken(User user, Duration expiredAt) {
         Date now = new Date();
         return makeToken(new Date(now.getTime() + expiredAt.toMillis()), user);
@@ -43,12 +44,12 @@ public class TokenProvider {
         Date now = new Date();
 
         return Jwts.builder()
-                .setHeaderParam(Header.TYPE, Header.JWT_TYPE) // 헤더 typ : JWT
-                .setIssuer(jwtProperties.getIssuer()) // 발급자 (application.properties에서 설정)
-                .setIssuedAt(now) // 토큰 생성 시간
-                .setExpiration(expiry) // 만료 시간
-                .setSubject(user.getEmail()) // sub: 유저 이메일
-                .claim("id", user.getUserId()) // claim id: 유저 ID (user.getId())
+                .setHeaderParam(Header.TYPE, Header.JWT_TYPE) // 헤더 설정(typ : JWT)
+                .setIssuer(jwtProperties.getIssuer()) // 발급자 설정(application.properties에서 설정)
+                .setIssuedAt(now) // 토큰 생성 시간(iat)
+                .setExpiration(expiry) //토큰 만료 시간(exp)
+                .setSubject(user.getEmail())
+                .claim("id", user.getUserId()) // 유저 아이디(client_id)
                 .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey()) // HMAC SHA256 방식 암호화
                 .compact();
     }
@@ -77,12 +78,12 @@ public class TokenProvider {
         ERROR        // 기타 오류
     }
 
-    // 토큰 기반으로 인증 정보 가져오는 메서드
+    // 토큰 기반으로 인증 정보 가져와서 Authentication 객체 생성
     public Authentication getAuthentication(String token) {
-        Claims claims = getClaims(token);
-        Set<SimpleGrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
-        return new UsernamePasswordAuthenticationToken(new org.springframework.security.core.userdetails.User(claims.getSubject
-            (), "", authorities), token, authorities);
+        String email = getSubject(token);
+        UserDetails userDetails = userDetailService.loadUserByUsername(email);
+        return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
+        // UsernamePasswordAuthenticationToken을 사용하여 SecurityContext에서 인증 가능하도록 객체 생성
     }
 
     // 토큰 기반으로 유저 ID 가져오는 메서드
@@ -90,7 +91,14 @@ public class TokenProvider {
         Claims claims = getClaims(token);
         return claims.get("id", Long.class);
     }
-
+    // 토큰으로 만료 기한 가져오는 메서드 
+    public Date getExpiration(String token) {
+        return getClaims(token).getExpiration();
+    }
+    // 토큰으로 이메일 가져오는 메서드 
+    public String getSubject(String token){
+        return getClaims(token).getSubject();
+    }
     // 토큰에서 Claims 정보 조회
     private Claims getClaims(String token) {
         return Jwts.parser()

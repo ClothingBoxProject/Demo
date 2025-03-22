@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
-import axios from 'axios';
 
 import Login from "./components/AuthForm/Login";
 import Register from "./components/AuthForm/Register";
@@ -16,10 +15,12 @@ import MyPage from "./components/User/MyPage";
 import ClothingSearch from "./components/Clothing/ClothingSearch";
 import LocationBin from "./components/Location/LocationBin";
 import ClothingImpact from "./components/Clothing/ClothingImpact";
+import { AuthProvider } from "./contexts/AuthContext";
 
 const App = () => {
   return (
     <Router>
+    <AuthProvider>
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/login" element={<Login />} />
@@ -36,6 +37,7 @@ const App = () => {
         <Route path="/box-location" element={<LocationBin />} />
         <Route path="/clothing-impact" element={<ClothingImpact />} />
       </Routes>
+    </AuthProvider>
     </Router>
   );
 };

@@ -1,3 +1,4 @@
+//MapCompoenent.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Select from "react-select"; // react-select 임포트

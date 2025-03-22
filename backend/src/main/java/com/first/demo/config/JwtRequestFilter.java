@@ -1,9 +1,12 @@
+//JwtRequestFilter.java
 package com.first.demo.config;
 
 import java.io.IOException;
+import java.util.Set;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.first.demo.config.jwt.TokenProvider;
@@ -15,44 +18,72 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 // 토큰 필터 구현
-// (JWT 토큰을 Authorization 헤더에 포함하여 요청하면 이를 검사하고 SecurityContext에 인증 정보를 설정)
+// JWT 토큰을 Authorization 헤더에 포함하여 요청하면 이를 검사하고 SecurityContext에 인증 정보를 설정
 @RequiredArgsConstructor
-public class TokenAuthenticationFilter extends OncePerRequestFilter {
+@Component
+public class JwtRequestFilter extends OncePerRequestFilter {
     private final TokenProvider tokenProvider;
 
     private final static String HEADER_AUTHORIZATION = "Authorization";
     private final static String TOKEN_PREFIX = "Bearer ";
+    
+    private static final Set<String> EXCLUDED_PATHS = Set.of(
+        "/api/auth/signup",
+        "/api/auth/login",
+        "/api/auth/logout",
+        "/api/auth/refresh" // 회원가입, 로그인, 로그아웃, 리프레시 
+    );
 
-    // 사용자가 JWT를 헤더에 포함하여 요청
-    // JWT가 유효한지 검증한 후 인증 정보를 SecurityContext에 설정
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain)  throws ServletException, IOException {
+        
+        String requestURI = request.getRequestURI();
+        // 예외 URI라면 필터 건너뛰기
+        if (EXCLUDED_PATHS.contains(requestURI)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         // 요청 헤더의 Authorization 키의 값 조회 
         String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
         // 가져온 값에서 접두사를 제거하고 jwt 토큰만 남기기 
         String token = getAccessToken(authorizationHeader);
+
+        if (token == null) {
+            filterChain.doFilter(request, response); // 토큰 없는 요청은 통과
+            return;
+        }
         TokenProvider.TokenValidationResult result = tokenProvider.validateToken(token);
 
         switch (result) {
             case VALID -> {
-                Authentication authentication = tokenProvider.getAuthentication(token); // 토큰 기반으로 인증 정보 가져오는 메서드
+                Authentication authentication = tokenProvider.getAuthentication(token); 
+                // 토큰 기반으로 인증 정보 가져오는 메서드
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 // Spring Security의 SecurityContext에 Authentication 객체를 저장
             }
             case EXPIRED -> {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 🔥 401 응답 반환 (액세스 토큰 만료)
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 응답 반환 (액세스 토큰 만료)
                 response.getWriter().write("Access token expired");
                 return;
             }
             case INVALID -> {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 🔥 401 응답 반환 (변조된 토큰)
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 응답 반환 (변조된 토큰)
                 response.getWriter().write("Invalid token");
                 return;
             }
-            default -> throw new IllegalArgumentException("Unexpected value: " + result);
+            case ERROR -> {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.getWriter().write("Internal server error: token validation failed");
+                return;
+            }
+            default -> {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("Unknown token validation result");
+                return;
+            }
         }
 
         filterChain.doFilter(request, response);

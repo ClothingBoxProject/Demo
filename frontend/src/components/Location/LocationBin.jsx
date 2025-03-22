@@ -1,9 +1,9 @@
+//LocationBin.jsx
 import React from "react";
 import "../../styles/LocationCSS/LocationBin.css";
 
 import Header from "../Menu/Header.jsx";
 import Footer from "../Menu/Footer.jsx";
-import SearchBar from "../Menu/SearchBar.jsx";
 import Suggestion from "../SuggestionForm/Suggestion.jsx";
 import MapComponent from "./MapComponent.jsx";
 

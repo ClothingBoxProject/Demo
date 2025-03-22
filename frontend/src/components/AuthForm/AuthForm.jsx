@@ -1,63 +1,51 @@
-import React, { useState } from "react";
+// AuthForm.jsx
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { setAccessToken } from "../../utils/db";
+import { AuthContext } from "../../contexts/AuthContext";
 import Header from "../Menu/Header.jsx";
 import Footer from "../Menu/Footer.jsx";
+import axios from "axios";
 
 const AuthForm = ({ type }) => {
   const navigate = useNavigate();
+  const { setAuthStatus } = useContext(AuthContext); 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   // 회원가입 요청 (백엔드 API 연결)
   const handleRegister = async () => {
-    try {
-      const response = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-      if (response.ok) {
-        alert("회원가입 성공! 로그인 페이지로 이동합니다.");
-        navigate("/login"); // 성공 시, login 페이지로 이동
-      } else {
-        const errorMessage = await response.text();
-        setError(errorMessage || "중복된 이메일입니다.");
+      try {
+        await axios.post("/api/auth/signup", { email, password }, { withCredentials: true });
+        alert("회원가입 성공. 로그인 페이지로 이동합니다.");
+        navigate("/login");
+      } catch (error) {
+        console.error("회원가입 중 오류:", error);
+        const msg = error.response?.data || "중복된 이메일입니다.";
+        setError(msg);
       }
-    } catch (error) {
-      console.error("회원가입 중 오류 발생:", error);
-      setError("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
-    }
   };
+
   // 로그인 요청 (백엔드 API 연결)
   const handleLogin = async () => {
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await axios.post(
+        "/api/auth/login",
+        { email, password },
+        { withCredentials: true }
+      );
 
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem("accessToken", data.accessToken); // accessToken 저장
-        alert("로그인 성공!");
-        navigate("/"); // 메인 페이지로 이동
-      } else {
-        const errorMessage = await response.text();
-        setError(errorMessage || "이메일 또는 비밀번호가 잘못되었습니다.");
-      }
+      const { accessToken } = response.data;
+      await setAccessToken(accessToken);
+      setAuthStatus("loggedIn");
+      navigate("/");
     } catch (error) {
-      console.error("로그인 중 오류 발생:", error);
-      setError("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      console.error("로그인 오류:", error);
+      const msg = error.response?.data || "이메일 또는 비밀번호가 잘못되었습니다.";
+      setError(msg);
     }
   };
-   
 
   // 폼 제출 처리
   const handleSubmit = async (e) => {
@@ -76,7 +64,7 @@ const AuthForm = ({ type }) => {
       <Header />
       <div className="content">
         <div className="form-container">
-          <p class="form-top-text">
+          <p className="form-top-text">
             {type === "login" && "로그인"}
             {type === "register" && "회원가입"}
             {type === "findId" && "아이디 찾기"}
@@ -85,7 +73,12 @@ const AuthForm = ({ type }) => {
 
           <form onSubmit={handleSubmit}>
             {(type === "login" || type === "register" || type === "findId" || type === "resetPassword") && (
-              <input type="email" placeholder="이메일 주소" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              <input 
+                type="email" 
+                placeholder="이메일 주소" 
+                value={email} 
+                onChange={(e) => setEmail(e.target.value)} 
+                required />
             )}
             {(type === "login" || type === "register" || type === "resetPassword") && (
               <input type="password" placeholder="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} required />

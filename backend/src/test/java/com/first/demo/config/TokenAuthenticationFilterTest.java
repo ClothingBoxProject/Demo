@@ -1,34 +1,38 @@
 package com.first.demo.config;
 
-import com.first.demo.config.jwt.TokenProvider;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
-import java.io.IOException;
-
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import com.first.demo.config.jwt.TokenProvider;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletResponse;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 class TokenAuthenticationFilterTest {
 
-    private TokenAuthenticationFilter tokenAuthenticationFilter;
+    private JwtRequestFilter tokenAuthenticationFilter;
 
     @Mock
     private TokenProvider tokenProvider;
@@ -39,7 +43,7 @@ class TokenAuthenticationFilterTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         tokenProvider = mock(TokenProvider.class);
-        tokenAuthenticationFilter = new TokenAuthenticationFilter(tokenProvider);
+        tokenAuthenticationFilter = new JwtRequestFilter(tokenProvider);
     }
     @Test
     @DisplayName("유효한 토큰이 제공될 경우 SecurityContext에 인증 정보 저장")

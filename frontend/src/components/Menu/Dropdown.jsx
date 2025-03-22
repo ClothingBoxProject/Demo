@@ -6,9 +6,12 @@ const Dropdown = ({ title, items, mainLink }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
-  const handleMainClick = (e) => {
-    e.preventDefault(); // 기본 동작 방지
-    navigate(mainLink); // 메인 링크로 이동
+  const handleMainClick = () => {
+    navigate(mainLink);
+  };
+
+  const handleItemClick = (link) => {
+    navigate(link);
   };
 
   return (
@@ -17,15 +20,20 @@ const Dropdown = ({ title, items, mainLink }) => {
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
     >
-      {/* 기부 가능한 의류 클릭 시 /clothing-donation 이동 */}
-      <a href={mainLink} onClick={handleMainClick}>
+      <button className="dropdown-main" onClick={handleMainClick}>
         {title}
-      </a>
+      </button>
 
       {isOpen && (
         <div className="dropdown-content">
           {items.map((item, index) => (
-            <a key={index} href={item.link}>{item.label}</a>
+            <button
+              key={index}
+              className="dropdown-item"
+              onClick={() => handleItemClick(item.link)}
+            >
+              {item.label}
+            </button>
           ))}
         </div>
       )}
