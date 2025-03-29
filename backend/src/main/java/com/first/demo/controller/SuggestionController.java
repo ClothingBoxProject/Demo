@@ -2,6 +2,7 @@ package com.first.demo.controller;
 
 import com.first.demo.dao.Suggestion;
 import com.first.demo.dao.SuggestionStatus;
+import com.first.demo.dto.SuggestionRequest;
 import com.first.demo.service.SuggestionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,9 +22,9 @@ public class SuggestionController {
     @PostMapping("/{userId}")
     public ResponseEntity<Suggestion> createSuggestion(
             @PathVariable Long userId,
-            @RequestParam String category,
-            @RequestParam String suggestion) {
-        Suggestion createdSuggestion = suggestionService.createSuggestion(userId, category, suggestion);
+            @RequestBody SuggestionRequest suggestionRequest) { // JSON을 받을 DTO 사용
+        Suggestion createdSuggestion = suggestionService.createSuggestion(userId,
+                suggestionRequest.getCategory(), suggestionRequest.getSuggestionText());
         return ResponseEntity.ok(createdSuggestion);
     }
 
