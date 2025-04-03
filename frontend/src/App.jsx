@@ -17,6 +17,8 @@ import LocationBin from "./components/Location/LocationBin";
 import ClothingImpact from "./components/Clothing/ClothingImpact";
 import { AuthProvider } from "./contexts/AuthContext";
 
+import OAuthSuccess from "./contexts/OAuthSuccess";
+
 const App = () => {
   return (
     <Router>
@@ -36,6 +38,9 @@ const App = () => {
         <Route path="/clothing-search" element={<ClothingSearch />} />
         <Route path="/box-location" element={<LocationBin />} />
         <Route path="/clothing-impact" element={<ClothingImpact />} />
+
+        <Route path="/oauth-success" element={<OAuthSuccess />} />
+
       </Routes>
     </AuthProvider>
     </Router>

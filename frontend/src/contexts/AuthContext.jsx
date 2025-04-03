@@ -1,4 +1,3 @@
-// AuthContext.jsx
 import { createContext, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -21,14 +20,14 @@ export const AuthProvider = ({ children }) => {
     const checkAuthStatus = async () => {
       console.log("[AuthContext] 🔍 Checking auth status...");
       const token = await getAccessToken();
+
       if (!token) {
-        console.log("[AuthContext] ❌ No token. Logged out.");
-        setAuthStatus("loggedOut");
-        return ;
+        console.log("[AuthContext] ❌ No token found. Checking OAuth login...");
+        await checkOAuthLogin(); // ✅ OAuth 로그인 성공 여부 확인
+        return;
       }
 
       const expired = await isAccessTokenExpired();
-
       console.log(`[AuthContext] 🔐 Token: ${token}`);
       console.log(`[AuthContext] ⏰ Expired: ${expired}`);
 
@@ -36,11 +35,34 @@ export const AuthProvider = ({ children }) => {
         console.log("[AuthContext] ✅ Token valid. Logged in.");
         setAuthStatus("loggedIn");
       } else {
-          console.log("[AuthContext] 🔄 Token expired. Trying refresh...");
-          const newToken = await refreshAccessToken();
-          if (!newToken) {
-            console.log("[AuthContext] 🔁 Refresh failed. Logging out...");
-          }
+        console.log("[AuthContext] 🔄 Token expired. Trying refresh...");
+        const newToken = await refreshAccessToken();
+        if (!newToken) {
+          console.log("[AuthContext] 🔁 Refresh failed. Logging out...");
+          logout(); // ✅ 토큰 갱신 실패 시 로그아웃
+        }
+      }
+    };
+
+    const checkOAuthLogin = async () => {
+      try {
+        console.log("[AuthContext] 🔄 Checking OAuth login success...");
+        const response = await axios.get("/api/auth/oauth/success", {
+          withCredentials: true,
+        });
+
+        if (response.data.accessToken) {
+          console.log("[AuthContext] ✅ OAuth 로그인 성공! 토큰 저장 중...");
+          await setAccessToken(response.data.accessToken);
+          setAuthStatus("loggedIn");
+          navigate("/"); // ✅ 로그인 성공 후 홈으로 이동
+        } else {
+          console.log("[AuthContext] ❌ OAuth 로그인 실패");
+          setAuthStatus("loggedOut");
+        }
+      } catch (error) {
+        console.error("[AuthContext] ❗ OAuth 로그인 오류:", error);
+        setAuthStatus("loggedOut");
       }
     };
 
@@ -53,6 +75,7 @@ export const AuthProvider = ({ children }) => {
   const refreshAccessToken = async () => {
     if (isRefreshing) return null;
     isRefreshing = true;
+
     try {
       console.log("[AuthContext] 🛰️ Sending refresh request...");
       const response = await axios.post("/api/auth/refresh", null, {
@@ -67,19 +90,19 @@ export const AuthProvider = ({ children }) => {
       return accessToken;
     } catch (error) {
       console.error("[AuthContext] ❗ Error refreshing token:", error);
-      if (authStatus !== "loggingOut") {
-        logout();
-      }
       return null;
+    } finally {
+      isRefreshing = false;
     }
   };
 
   const logout = async () => {
     console.log("[AuthContext] 🚪 Logging out...");
-    if(authStatus=="loggingOut" || authStatus=="loggedOut"){
+    if (authStatus === "loggingOut" || authStatus === "loggedOut") {
       return;
     }
     setAuthStatus("loggingOut");
+
     try {
       await axios.delete("/api/auth/logout", {
         withCredentials: true,

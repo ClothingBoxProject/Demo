@@ -9,6 +9,13 @@ const dbPromise = openDB("authDB", 1, {
   },
 });
 
+// 쿠키에서 AccessToken 읽기 추가 !
+export const getAccessTokenFromCookie = () => {
+  const cookies = document.cookie.split(";").map(c => c.trim());
+  const tokenCookie = cookies.find(c => c.startsWith("accessToken="));
+  return tokenCookie ? tokenCookie.split("=")[1] : null;
+};
+
 // AccessToken 저장
 export const setAccessToken = async (token) => {
   const db = await dbPromise;
