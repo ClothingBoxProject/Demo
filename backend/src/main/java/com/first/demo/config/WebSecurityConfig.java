@@ -2,6 +2,8 @@
 package com.first.demo.config;
 import java.util.List;
 
+import com.first.demo.security.OAuth2LoginSuccessHandler;
+import com.first.demo.service.OAuth2UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -45,22 +47,23 @@ public class WebSecurityConfig {
         return source;
     }
 
-    // Spring Security HTTP 요청별 보안 설정
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) throws Exception {
-        // HttpSecurity : Spring Security에서 제공하는 보안 관련 설정을 구성하는 클래스(Spring Security의 기본 보안 설정을 재정의)
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter, OAuth2UserService oAuth2UserService, OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler) throws Exception {
         return http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource())) 
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/donations/**", "/api/users/**", "/api/suggestions/**").authenticated() // 로그인(또는 토큰 인증 등)한 사용자만 해당 요청을 허용
-            .anyRequest().permitAll() // 인증/인가 체크 없이 모든 사용자에게 허용
-            )
-            .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class) // jwtRequestFilter를 UsernamePasswordAuthenticationFilter 이전에 실행되도록 설정
-            .build();
-            //인증이 필요한 API는 SecurityFilterChain에 의해 jwtRequestFilter가 실행
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/donations/**", "/api/users/**", "/api/suggestions/**").authenticated()
+                        .anyRequest().permitAll()
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserService))
+                        .successHandler(oAuth2LoginSuccessHandler) // ✅ 로그인 성공 후 핸들러 실행
+                )
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
-    
+
     // 인증 매니저 및 비밀번호 암호화 설정
     @Bean
     public AuthenticationManager authenticationManager(

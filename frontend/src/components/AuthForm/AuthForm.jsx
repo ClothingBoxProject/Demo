@@ -1,5 +1,5 @@
 // AuthForm.jsx
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { setAccessToken } from "../../utils/db";
 import { AuthContext } from "../../contexts/AuthContext";
@@ -49,6 +49,25 @@ const AuthForm = ({ type }) => {
   };
 
   const handleOAuthLogin = (provider) => {
+    window.location.href = `http://localhost:8080/oauth2/authorization/${provider}`;
+  };
+
+  useEffect(() => {
+    const checkOAuthLogin = async () => {
+      try {
+        const token = await getAccessToken(); // ✅ IndexedDB에서 accessToken 가져오기
+        if (token) {
+          setAuthStatus("loggedIn");
+          navigate("/"); // ✅ 홈으로 이동
+        }
+      } catch (error) {
+        console.error("OAuth 로그인 상태 확인 실패:", error);
+      }
+    };
+
+    checkOAuthLogin();
+  }, []);
+
     if (provider === "kakao") {
       const KAKAO_CLIENT_ID = import.meta.env.VITE_KAKAO_REST_API_KEY;
       const REDIRECT_URI = import.meta.env.VITE_KAKAO_REDIRECT_URI;
