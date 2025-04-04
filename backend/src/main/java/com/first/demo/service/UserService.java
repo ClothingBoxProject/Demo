@@ -4,7 +4,6 @@ package com.first.demo.service;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
@@ -84,5 +83,18 @@ public class UserService {
         userRepository.deleteById(userId); // JpaRepository에서 기본적으로 제공 
     }
 
+    // 소셜 회원가입 
+    public Long createSocialUser(String email, String nickname) {
+        userRepository.findByEmail(email)
+            .ifPresent(user -> {
+            throw new UserServiceException("이미 존재하는 이메일입니다.", HttpStatus.CONFLICT);
+        });
+        return userRepository.save(User.builder()
+                    .email(email)
+                    .userName(nickname)
+                    .passwordHash("SOCIAL_USER") 
+                    .build()).getUserId();
+    }
+    
 }
 

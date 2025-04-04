@@ -15,6 +15,8 @@ import MyPage from "./components/User/MyPage";
 import ClothingSearch from "./components/Clothing/ClothingSearch";
 import LocationBin from "./components/Location/LocationBin";
 import ClothingImpact from "./components/Clothing/ClothingImpact";
+import KakaoRedirectPage from './components/SocialLogin/KakaoRedirectPage';
+
 import { AuthProvider } from "./contexts/AuthContext";
 
 import OAuthSuccess from "./contexts/OAuthSuccess";
@@ -38,9 +40,8 @@ const App = () => {
         <Route path="/clothing-search" element={<ClothingSearch />} />
         <Route path="/box-location" element={<LocationBin />} />
         <Route path="/clothing-impact" element={<ClothingImpact />} />
-
         <Route path="/oauth-success" element={<OAuthSuccess />} />
-
+        <Route path="/oauth2/kakao/callback" element={<KakaoRedirectPage />} />
       </Routes>
     </AuthProvider>
     </Router>

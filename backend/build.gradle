@@ -47,6 +47,7 @@ dependencies {
 	testImplementation 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
 
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-authorization-server' // OAuth2 인증 서버 기능을 제공함 (토큰 발급, 클라이언트 등록 등)
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server' // 리소스 보호 서버 기능을 제공함 (JWT 토큰 검증, 인증 정보 추출 등)
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 }

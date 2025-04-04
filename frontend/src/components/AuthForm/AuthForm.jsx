@@ -68,6 +68,16 @@ const AuthForm = ({ type }) => {
     checkOAuthLogin();
   }, []);
 
+    if (provider === "kakao") {
+      const KAKAO_CLIENT_ID = import.meta.env.VITE_KAKAO_REST_API_KEY;
+      const REDIRECT_URI = import.meta.env.VITE_KAKAO_REDIRECT_URI;
+      const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${KAKAO_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
+      // 사용자가 카카오로 이동하기 위한 URL 
+      window.location.href = kakaoAuthUrl;
+    }
+    // TODO: Google, Naver도 비슷하게 구현
+  };
+
   // 폼 제출 처리
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -119,9 +129,7 @@ const AuthForm = ({ type }) => {
           </form>
 
           {type === "login" && (
-            <SocialLoginButtons handleOAuthLogin={(provider) => {
-              window.location.href = `http://localhost:8080/oauth2/authorization/${provider}`;
-            }} />
+          <SocialLoginButtons handleOAuthLogin={handleOAuthLogin} />
           )}
 
           <div className="toggle">
