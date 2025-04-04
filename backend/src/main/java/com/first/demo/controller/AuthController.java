@@ -50,10 +50,11 @@ public class AuthController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body("중복된 이메일입니다."); // 400 Bad Request : 클라이언트 요청이 잘못됨(에러 메세지 포함)
         } catch (Exception e) { 
-            return ResponseEntity.status(500).body("서버 내부 오류가 발생했습니다.");
+            return ResponseEntity.status(500).body(e.getMessage());
         }
     }
-
+    
+    // 로그인 (POST /api/auth/login)
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         try {
@@ -72,7 +73,7 @@ public class AuthController {
         }
     }
 
-    // AccessToken 재발급
+    // AccessToken 재발급 (POST /api/auth/refresh)
     // @CookieValue : 클라이언트가 보낸 쿠키에서 refreshToken값 추출 
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(@CookieValue(value = "refreshToken", required = true) String refreshToken,
