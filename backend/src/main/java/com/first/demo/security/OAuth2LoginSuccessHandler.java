@@ -62,6 +62,9 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         // ✅ JWT를 쿠키로 저장 (보안 강화)
         Cookie jwtCookie = new Cookie("accessToken", jwtToken);
         jwtCookie.setHttpOnly(true);
+        jwtCookie.setSecure(true); //  Https 환경에서만 브라우저가 쿠키를 서버에 전송하게! (https 도메인 연결하면 자동으로 브라우저가 안전하게 처리해줌)
+        // 지금은 localhost라 로그인 후에 개발자 도구 쿠키에 액세스 토큰이 보이고 있음
+        // HttpOnly 설정해둬서 JS에서 document.cookie로 접근 불가하니 보여도 상관 없다고는 하는데 일단 안 보이는 게 나을 것 같아서!
         jwtCookie.setPath("/");
         jwtCookie.setMaxAge(3600); // 1시간
         response.addCookie(jwtCookie);
