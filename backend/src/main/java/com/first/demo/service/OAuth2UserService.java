@@ -21,30 +21,52 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
+        String provider = userRequest.getClientRegistration().getRegistrationId(); // naver, kakao, google
         String userNameAttributeName = userRequest.getClientRegistration()
                 .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
 
-        // 네이버 응답 구조 확인 (response 안에 포함됨)
         Map<String, Object> attributes = oAuth2User.getAttributes();
-        Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+        String email;
+        String name;
 
-        String email = (String) response.get("email");
-        String name = (String) response.get("name");
+        if ("kakao".equals(provider)) {
+            Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+            Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
+            email = (String) kakaoAccount.get("email");
+            name = (String) profile.get("nickname");
+        } else if ("naver".equals(provider)) {
+            Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+            email = (String) response.get("email");
+            name = (String) response.get("name");
+        } else if ("google".equals(provider)) {
+            email = (String) attributes.get("email");
+            name = (String) attributes.get("name");
+        } else {
+            email = null;
+            name = null;
+        }
 
-        // 사용자 정보 저장 또는 업데이트
+        String role = switch (provider.toLowerCase()) {
+            case "kakao" -> "KAKAO_USER";
+            case "naver" -> "NAVER_USER";
+            case "google" -> "GOOGLE_USER";
+            default -> "USER";
+        };
+
         User user = userRepository.findByEmail(email)
-                .orElseGet(() -> {
-                    User newUser = User.builder()
-                            .userName(name)
-                            .email(email)
-                            .passwordHash("") // OAuth 로그인 사용자는 비밀번호 없음
-                            .role("USER")
-                            .isActive(true)
-                            .build();
-                    return userRepository.save(newUser);
-                });
+                .orElseGet(() -> userRepository.save(User.builder()
+                        .userName(name)
+                        .email(email)
+                        .passwordHash("OAUTH_USER")
+                        .role(role)
+                        .isActive(true)
+                        .build()));
 
-        // OAuth2User 객체 반환
-        return new DefaultOAuth2User(Set.of(), attributes, userNameAttributeName);
+        Map<String, Object> simplifiedAttributes = Map.of(
+                "email", email,
+                "name", name,
+                "provider", provider
+        );
+        return new DefaultOAuth2User(Set.of(), simplifiedAttributes, "email");
     }
 }
